@@ -5,6 +5,7 @@ import { NotFound } from './pages/NotFound';
 function App() {
   return (
     <>
+   
       <Router>
         <Routes>
           <Route index element={<Home />}/>
