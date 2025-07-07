@@ -5,7 +5,7 @@ const projects =[
     id:1,
     title:"Food Delivery App",
     description : "food delivery app built with microservices architecture using React, Node.js, and MongoDB. It allows users to order food from various restaurants, track their orders in real-time, and make secure payments.",
-    image:"/public/projects/project1.png",
+    image:"/projects/project1.png",
     tags:["React", "Node.js", "MongoDB", "Microservices"],
     demoUrl: "#",
     githubUrl: "https://github.com/chamodipiyadasa/food-ordering-and-delivering-app"
@@ -15,7 +15,7 @@ const projects =[
     id:2,
     title:"Rest Countries API",
     description : "A web application that provides information about countries using the Rest Countries API. It allows users to search for countries, view details such as population, area, and capital, and explore country flags.",
-    image:"/public/projects/project2.png",
+    image:"/projects/project2.png",
     tags:["React", "API", "JavaScript"],
     demoUrl: "https://rest-country-aq1pt09yl-chamodipiyadasas-projects.vercel.app",
     githubUrl: "https://github.com/chamodipiyadasa/rest-countryapi"
@@ -24,7 +24,7 @@ const projects =[
     id:3,
     title: "Virtu-Wear -Fashion E-commerce Web Application",
     description:"Research based project . It is a fashion e-commerce web application that allows users to customize clothing items and view them in 360 degrees.",
-    image:"/public/projects/project3.png",
+    image:"/projects/project3.png",
     tags:["React", "Node.js", "MongoDB", "360-degree view"],
     demoUrl:"#",
     githubUrl:"https://github.com/chamodipiyadasa/ViruWear--virtual-dressing-room"
