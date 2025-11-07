@@ -62,7 +62,7 @@ export const ContactSection = () => {
       if (!newWindow && navigator.clipboard) {
         navigator.clipboard.writeText(mailto).catch(() => {})
       }
-    } catch (err) {
+    } catch {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(mailto).catch(() => {})
       }
