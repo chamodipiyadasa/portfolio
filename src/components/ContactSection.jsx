@@ -1,16 +1,76 @@
 import { Linkedin, Mail, MapPin, Phone, Send } from "lucide-react"
 import { cn } from "../lib/utils"
-
+import { useState } from "react"
+import { send } from "@emailjs/browser"
 
 
 export const ContactSection = () => {
-  
+  const [sending, setSending] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState(false)
 
-  const handleSubmit =(e) => {
+  // EmailJS config via Vite env variables (set these in your .env as VITE_...)
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setTimeout(() =>{
+    const form = e.currentTarget
+    const formData = new FormData(form)
+    const name = formData.get('name') || ''
+    const email = formData.get('email') || ''
+    const message = formData.get('message') || ''
 
-    },1500)
+    // Build a mailto link so the user's mail client opens with the message prefilled.
+    const subject = `Message from ${name}`
+    const body = `From: ${name} <${email}>\n\n${message}`
+    const mailto = `mailto:chamodipiyadasa@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+
+    setSending(true)
+    setError(false)
+
+    // If EmailJS config is present, use it to send the email from the client
+    if (SERVICE_ID && TEMPLATE_ID && PUBLIC_KEY) {
+      const templateParams = {
+        from_name: name,
+        from_email: email,
+        message,
+      }
+      send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+        .then(() => {
+          setSending(false)
+          setSent(true)
+          form.reset()
+          setTimeout(() => setSent(false), 3000)
+        })
+        .catch(() => {
+          // On failure, fallback to mailto behavior
+          setSending(false)
+          setError(true)
+        })
+      return
+    }
+
+    // Fallback: open mail client with mailto or copy mailto to clipboard
+    try {
+      const newWindow = window.open(mailto, '_self') || window.open(mailto)
+      setSending(false)
+      setSent(true)
+      form.reset()
+      setTimeout(() => setSent(false), 3000)
+      if (!newWindow && navigator.clipboard) {
+        navigator.clipboard.writeText(mailto).catch(() => {})
+      }
+    } catch (err) {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(mailto).catch(() => {})
+      }
+      setSending(false)
+      setSent(true)
+      form.reset()
+      setTimeout(() => setSent(false), 3000)
+    }
   }
   return (
     <section id="contact" className="py-24 px-4 relative bg-secondary/30">
@@ -22,7 +82,7 @@ export const ContactSection = () => {
       I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Whether you have a question, want to collaborate, or just want to say hello, feel free to reach out!
 
      </p>
-     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
       <div className="space-y-8">
         <h3 className="text-2xl font-semibold mb-6">
           Contact Information
@@ -80,9 +140,9 @@ export const ContactSection = () => {
         </div>
       </div>
 
-      <div className="bg-card p-8 rounded-lg shadow-xs" onSubmit={handleSubmit}>
+      <div className="bg-card p-8 rounded-lg shadow-xs">
         <h3 className="text-2xl font-semibold mb-6"> Send a Message</h3>
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-2"> Your Name</label>
             <input
@@ -116,13 +176,24 @@ export const ContactSection = () => {
               placeholder="Enter your message"
             />
           </div>
-          <button type ="submit" className={cn(
-            "cosmic-button w-full flex items-center justify-center gap-2"
-
-          )}>Send Message
-            <Send  size={16}/>
-
+          <button
+            type="submit"
+            disabled={sending}
+            className={cn(
+              "cosmic-button w-full flex items-center justify-center gap-2",
+              sending && 'opacity-70 cursor-not-allowed'
+            )}
+          >
+            {sending ? 'Sending...' : 'Send Message'}
+            <Send size={16} />
           </button>
+
+          {sent && (
+            <p className="text-center text-sm text-green-400 mt-2">Message prepared in your mail client.</p>
+          )}
+          {error && (
+            <p className="text-center text-sm text-amber-400 mt-2">Failed to send via EmailJS — fallback mail link copied to clipboard.</p>
+          )}
           </form>
 
       </div>
